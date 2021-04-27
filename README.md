@@ -9,7 +9,7 @@ This repository provides an implementation of the gated convolutional recurrent 
 ```
 @article{tan2020learning,
   title={Learning complex spectral mapping with gated convolutional recurrent networks for monaural speech enhancement},
-  author={Tan, Ke and Wang, De Liang},
+  author={Tan, Ke and Wang, DeLiang},
   journal={IEEE/ACM Transactions on Audio, Speech, and Language Processing},
   volume={28},
   pages={380--390},
