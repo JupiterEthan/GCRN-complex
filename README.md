@@ -13,7 +13,6 @@ pip install -r requirements.txt
 
 ## Data preparation
 To use this program, data and file lists need to be prepared. If configured correctly, the directory tree should look like this:
-
 ```
 .
 ├── data
@@ -56,8 +55,7 @@ To use this program, data and file lists need to be prepared. If configured corr
         ├── stft.py
         └── utils.py
 ```
-
-Follow these instructions:
+You will find that some files above are missing in your directory tree. Those are for you to prepare. Don't worry. Follow these instructions:
 1. Write your own scripts to prepare data for training, validation and testing. 
     - For the training set, each example needs to be saved into an HDF5 file, which contains two HDF5 datasets, named ```mix``` and ```sph``` respectively. ```mix``` stores a noisy mixture utterance, ```sph``` the corresponding clean speech utterance.
         - Example code:
