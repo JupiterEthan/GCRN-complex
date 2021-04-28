@@ -1,0 +1,5 @@
+../data/datasets/tr/tr_0.ex
+../data/datasets/tr/tr_1.ex
+../data/datasets/tr/tr_2.ex
+../data/datasets/tr/tr_3.ex
+../data/datasets/tr/tr_4.ex

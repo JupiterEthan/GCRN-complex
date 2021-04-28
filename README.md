@@ -30,6 +30,10 @@ To use this program, data and file lists need to be prepared. If configured corr
 │           ├── tt_snr0.ex
 │           ├── tt_snr-5.ex
 │           └── tt_snr5.ex
+├── examples
+│   └── filelists
+│       ├── tr_list.txt
+│       └── tt_list.txt
 ├── filelists
 │   ├── tr_list.txt
 │   └── tt_list.txt
@@ -55,24 +59,101 @@ To use this program, data and file lists need to be prepared. If configured corr
 
 Follow these instructions:
 1. Write your own scripts to prepare data for training, validation and testing. 
-- For the training set, each example needs to be saved into an HDF5 file, which contains two HDF5 datasets, named ```mix``` and ```sph``` respectively. ```mix``` stores a noisy mixture utterance, ```sph``` the corresponding clean speech utterance.
-    - Example:
-      ```
-      import h5py
-    
-      # some settings
-      ...
+    - For the training set, each example needs to be saved into an HDF5 file, which contains two HDF5 datasets, named ```mix``` and ```sph``` respectively. ```mix``` stores a noisy mixture utterance, ```sph``` the corresponding clean speech utterance.
+        - Example code:
+          ```
+          import os
 
-      for idx in range(n_tr_ex): # n_tr_ex is the number of training examples 
-          # generate a noisy mixture
+          import h5py
+          import numpy as np
+   
+
+          # some settings
           ...
-          filename = 'tr_{}.ex'.format(idx)
+          rms = 1.0
+
+          for idx in range(n_tr_ex): # n_tr_ex is the number of training examples 
+              # generate a noisy mixture
+              ...
+              mix = sph + noi
+              # normalize
+              c = rms * np.sqrt(mix.size / np.sum(mix**2))
+              mix *= c
+              sph *= c
+
+              filename = 'tr_{}.ex'.format(idx)
+              writer = h5py.File(os.path.join(filepath, filename), 'w')
+              writer.create_dataset('mix', data=mix.astype(np.float32), shape=mix.shape, chunks=True)
+              writer.create_dataset('sph', data=sph.astype(np.float32), shape=sph.shape, chunks=True)
+              writer.close()
+          ```
+    - For the validation set, all examples need to be saved into a single HDF5 file, each of which is stored in a HDF5 group. Each group contains two HDF5 datasets, one named ```mix``` and the other named ```sph```.
+        - Example code:
+          ```
+          import os
+
+          import h5py
+          import numpy as np
+
+
+          # some settings
+          ...
+          rms = 1.0
+          
+          filename = 'cv.ex'
           writer = h5py.File(os.path.join(filepath, filename), 'w')
-          writer.create_dataset('mix', data=mix.astype(np.float32), shape=mix.shape, chunks=True)
-          writer.create_dataset('sph', data=sph.astype(np.float32), shape=sph.shape, chunks=True)
+          for idx in range(n_cv_ex):
+              # generate a noisy mixture
+              ...
+              mix = sph + noi
+              # normalize
+              c = rms * np.sqrt(mix.size / np.sum(mix**2))
+              mix *= c
+              sph *= c
+
+              writer_grp = writer.create_group(str(count))
+              writer_grp.create_dataset('mix', data=mix.astype(np.float32), shape=mix.shape, chunks=True)
+              writer_grp.create_dataset('sph', data=sph.astype(np.float32), shape=sph.shape, chunks=True)
           writer.close()
-      ```
-- For validation set, all examples need to be saved into a single HDF5 file, each of which is stored in a 
+          ```
+    
+    - For the test set(s), all examples (in each condition) need to be saved into a single HDF5 file, each of which is stored in a HDF5 group. Each group contains two HDF5 datasets, one named ```mix``` and the other named ```sph```.
+        - Example code:
+          ```
+          import os
+
+          import h5py
+          import numpy as np
+
+
+          # some settings
+          ...
+          rms = 1.0
+          
+          filename = 'tt_snr-5.ex'
+          writer = h5py.File(os.path.join(filepath, filename), 'w')
+          for idx in range(n_cv_ex):
+              # generate a noisy mixture
+              ...
+              mix = sph + noi
+              # normalize
+              c = rms * np.sqrt(mix.size / np.sum(mix**2))
+              mix *= c
+              sph *= c
+
+              writer_grp = writer.create_group(str(count))
+              writer_grp.create_dataset('mix', data=mix.astype(np.float32), shape=mix.shape, chunks=True)
+              writer_grp.create_dataset('sph', data=sph.astype(np.float32), shape=sph.shape, chunks=True)
+          writer.close()
+          ```
+    - In the example code above, the root mean square power of the mixture is normalized to 1. The same scaling factor is applied to clean speech.
+2. Generate the file lists for training and test sets, and save them into a folder named ```filelists```. See [examples/filelists](examples/filelists) for the examples.
+
+
+## How to run
+1. Change the directory: ```cd scripts```. This is your working directory. All paths and commands below are relative to it.
+2. Train the model: ```./run_train.sh```. By default, a directory named ```exp``` will be automatically generated. Two model files will be generated under ```exp/models/```: ```latest.pt```(the model from the latest checkpoint) and ```best.pt```(the model that performs best on the validation set by far). ```latest.pt``` can be used to resume training if interrupted, and ```best.pt``` is typically used for testing. You can check the loss values in ```exp/loss.txt```.
+3. Evaluate the model: ```./run_evaluate.sh```. WAV files will be generated under ```../data/estimates```. STOI, PESQ and SNR results will be written into three files under ```exp```: ```stoi_scores.log```, ```pesq_scores.log``` and ```snr_scores.log```.
 
 
 ## How to cite
