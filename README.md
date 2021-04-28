@@ -55,23 +55,23 @@ To use this program, data and file lists need to be prepared. If configured corr
 
 Follow these instructions:
 1. Write your own scripts to prepare data for training, validation and testing. 
-- For training set, each example need to be saved into an HDF5 file, which contains two HDF5 datasets, named ```mix``` and ```sph``` respectively. ```mix``` stores a noisy mixture utterance, ```sph``` the corresponding clean speech utterance.
+- For the training set, each example needs to be saved into an HDF5 file, which contains two HDF5 datasets, named ```mix``` and ```sph``` respectively. ```mix``` stores a noisy mixture utterance, ```sph``` the corresponding clean speech utterance.
     - Example:
-    ```
-    import h5py
+      ```
+      import h5py
     
-    # some settings
-    ...
+      # some settings
+      ...
 
-    for idx in range(n_tr_ex): # n_tr_ex is the number of training examples 
-        # generate a noisy mixture
-        ...
-        filename = 'tr_{}.ex'.format(idx)
-        writer = h5py.File(os.path.join(filepath, filename), 'w')
-        writer.create_dataset('mix', data=mix.astype(np.float32), shape=mix.shape, chunks=True)
-        writer.create_dataset('sph', data=sph.astype(np.float32), shape=sph.shape, chunks=True)
-        writer.close()
-    ```
+      for idx in range(n_tr_ex): # n_tr_ex is the number of training examples 
+          # generate a noisy mixture
+          ...
+          filename = 'tr_{}.ex'.format(idx)
+          writer = h5py.File(os.path.join(filepath, filename), 'w')
+          writer.create_dataset('mix', data=mix.astype(np.float32), shape=mix.shape, chunks=True)
+          writer.create_dataset('sph', data=sph.astype(np.float32), shape=sph.shape, chunks=True)
+          writer.close()
+      ```
 - For validation set, all examples need to be saved into a single HDF5 file, each of which is stored in a 
 
 
