@@ -149,7 +149,7 @@ You will find that some files above are missing in your directory tree. Those ar
 
 
 ## How to run
-1. Change the directory: ```cd scripts```. This is your working directory. All paths and commands below are relative to it.
+1. Change the directory: ```cd scripts```. Remember that this is your working directory. All paths and commands below are relative to it.
 2. Check ```utils/networks.py``` for the GCRN configurations. By default, ```G=2``` (see the original paper) is used for LSTM grouping.
 3. Train the model: ```./run_train.sh```. By default, a directory named ```exp``` will be automatically generated. Two model files will be generated under ```exp/models/```: ```latest.pt```(the model from the latest checkpoint) and ```best.pt```(the model that performs best on the validation set by far). ```latest.pt``` can be used to resume training if interrupted, and ```best.pt``` is typically used for testing. You can check the loss values in ```exp/loss.txt```.
 4. Evaluate the model: ```./run_evaluate.sh```. WAV files will be generated under ```../data/estimates```. STOI, PESQ and SNR results will be written into three files under ```exp```: ```stoi_scores.log```, ```pesq_scores.log``` and ```snr_scores.log```.
